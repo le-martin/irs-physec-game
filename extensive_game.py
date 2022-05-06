@@ -101,6 +101,7 @@ move = g.root.append_move(bob, len(theta_combinations_bob))
 move.label = 'First round by Bob'
 for i, theta_b in enumerate(theta_combinations_bob):
     move.actions[i].label = str(theta_b)
+print(1)
 
 # Create the second level of the tree
 for i, theta_b in enumerate(theta_combinations_bob):
@@ -108,15 +109,22 @@ for i, theta_b in enumerate(theta_combinations_bob):
     move.label = 'Second round by Eve'
     for j, theta_e in enumerate(theta_combinations_eve):
         move.actions[j].label = str(theta_e)
+print(2)
 
 # Assign payoffs to terminal nodes
 for i, theta_b in enumerate(theta_combinations_bob):
+    print(f"Round {i}")
     for j, theta_e in enumerate(theta_combinations_eve):
         payoff_val = r_s[i * len(theta_combinations_bob) + j, 0]
         payoff_tuple = g.outcomes.add(str(payoff_val))
         payoff_tuple[0] = Fraction(payoff_val)
         payoff_tuple[1] = Fraction(-payoff_val)
         g.root.children[i].children[j].outcome = payoff_tuple
+print(3)
+
+#TODO: Compute subgame perfect nash equilibria
+solver = pygambit.nash.ExternalLCPSolver()
+nash_eq = solver.solve(g)
 
 end = datetime.now() - start
 print(f"Simulation took {end} seconds.")
