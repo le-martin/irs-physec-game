@@ -1,0 +1,10 @@
+EFG 2 R "Simple extensive game example" { "Bob" "Eve" }
+""
+
+p "" 1 1 "First round: player Bob" { "A" "B" } 0
+p "" 2 1 "Second round: player Eve" { "D" "E" } 0
+t "" 1 "5,2" { 5, 2 }
+t "" 2 "3,1" { 3, 1 }
+p "" 2 2 "Second round: player Eve" { "F" "G" } 0
+t "" 3 "6,3" { 6, 3 }
+t "" 4 "4,4" { 4, 4 }
