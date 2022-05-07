@@ -1,6 +1,6 @@
 #%%
 from datetime import datetime
-from fractions import Fraction
+# from fractions import Fraction
 import itertools
 
 # import nashpy as nash
@@ -83,10 +83,9 @@ h_E_mat = [h_AE + h_IE_E @ np.diag(theta_combinations[i, 1, :]) @ h_A_IE + h_IB_
 r_Eve = np.array([np.log2(1 + np.abs(h_E @ w) ** 2 / noise[1]) for h_E, w in zip(h_E_mat, w_mat)])
 r_s = r_Bob - r_Eve
 
-payoff_mat = r_s.reshape(len(theta_combinations_bob), len(theta_combinations_eve))
-
-#%%
-start = datetime.now()
+# payoff_mat = r_s.reshape(len(theta_combinations_bob), len(theta_combinations_eve))
+make_decimal = np.vectorize(lambda x: pygambit.Decimal(x))
+vals = make_decimal(r_s)
 
 # Create a extensive game and name it
 g = pygambit.Game.new_tree()
@@ -111,18 +110,21 @@ for i, theta_b in enumerate(theta_combinations_bob):
         move.actions[j].label = str(theta_e)
 print(2)
 
+#%%
 # Assign payoffs to terminal nodes
 for i, theta_b in enumerate(theta_combinations_bob):
     print(f"Round {i}")
     for j, theta_e in enumerate(theta_combinations_eve):
-        payoff_val = r_s[i * len(theta_combinations_bob) + j, 0]
+        payoff_val = vals[i * len(theta_combinations_bob) + j, 0]
         payoff_tuple = g.outcomes.add(str(payoff_val))
-        payoff_tuple[0] = Fraction(payoff_val)
-        payoff_tuple[1] = Fraction(-payoff_val)
+        payoff_tuple[0] = payoff_val
+        payoff_tuple[1] = -payoff_val
         g.root.children[i].children[j].outcome = payoff_tuple
 print(3)
 
-#TODO: Compute subgame perfect nash equilibria
+#%%
+print("Start Solver.")
+start = datetime.now()
 solver = pygambit.nash.ExternalLCPSolver()
 nash_eq = solver.solve(g)
 
